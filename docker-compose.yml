@@ -7,7 +7,7 @@ services:
     ports:
       - 5433:5432
     env_file:
-      - App/.env
+      - app/.env
 
   app:
     build: .
@@ -15,8 +15,8 @@ services:
     ports:
       - 8001:8000
     volumes:
-      - ./App:/app
+      - ./app:/app
     depends_on:
       - db
     env_file:
-      - App/.env
+      - app/.env
