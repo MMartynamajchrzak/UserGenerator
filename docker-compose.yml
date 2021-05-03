@@ -5,18 +5,18 @@ services:
   db:
     image: postgres
     ports:
-      - 5433:5432
+      - 5432:5432
     env_file:
-      - App/.env
+      - app/.env
 
   app:
     build: .
-    command: python main.py
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
-      - 8001:8000
+      - 8000:8000
     volumes:
-      - ./App:/app
+      - ./app:/app
     depends_on:
       - db
     env_file:
-      - App/.env
+      - app/.env
