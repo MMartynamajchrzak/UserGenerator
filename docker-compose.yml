@@ -1,11 +1,10 @@
-version: '3.1'
+version: "3.1"
 
 services:
-
   db:
     image: postgres
     ports:
-      - 5432:5432
+    - 5432:5432
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     env_file:
@@ -14,10 +13,10 @@ services:
   app:
     build: .
     command: /./wait-for-postgres.sh
-    ports:
-      - 8000:8000
     volumes:
       - ./app:/app
+    ports:
+      - 8000:8000
     depends_on:
       - db
     env_file:
