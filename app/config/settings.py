@@ -3,6 +3,8 @@ import environ
 
 env = environ.Env()
 
+# --------------------------constants--------------------------
+
 PHONE_NUM_LENGTH = 16
 SHORT_TEXT_LENGTH = 20
 MEDIUM_TEXT_LENGTH = 90
@@ -18,6 +20,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
+# --------------------------installed-apps--------------------------
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,6 +34,9 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
 ]
 
+
+# --------------------------middleware--------------------------
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -41,6 +48,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+
+# --------------------------templates--------------------------
 
 TEMPLATES = [
     {
@@ -61,7 +71,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
+# --------------------------database--------------------------
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
@@ -77,7 +87,9 @@ DATABASES = {
 
 AUTH_USER_MODEL = "users.ApiUser"
 
-# Password validation
+
+# --------------------------password-validation--------------------------
+
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -96,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# --------------------------internationalization--------------------------
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
@@ -110,16 +122,28 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# --------------------------django-storages--------------------------
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = env.str("MINIO_ACCESS_KEY", default='')
+AWS_SECRET_ACCESS_KEY = env.str("MINIO_SECRET_KEY", default='')
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME", default='static')
+AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", default='http://localhost:9000')
+
+
+# --------------------------static-files--------------------------
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+# --------------------------REST-framework--------------------------
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
@@ -127,6 +151,8 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+
+# --------------------------DRF-spectacular--------------------------
 SPECTACULAR_SETTINGS = {
     'TITLE': 'UserGenerator API',
     'DESCRIPTION': 'Api for UserGenerator App',

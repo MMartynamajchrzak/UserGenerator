@@ -1,15 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 from django.db import models
-
-phone_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$",
-                             message='First input country code eg.(+48), then the number.')
-
-gender = [
-    ('F', 'Female'),
-    ('M', 'Male'),
-]
+from . import constants
 
 
 class CreatedUpdatedMixin:
@@ -25,14 +17,14 @@ class ApiUser(AbstractUser, CreatedUpdatedMixin):
 
 # Generated User
 class User(models.Model, CreatedUpdatedMixin):
-    gender = models.CharField(choices=gender, max_length=settings.SHORT_TEXT_LENGTH)
+    gender = models.CharField(choices=constants.gender, max_length=settings.SHORT_TEXT_LENGTH)
     first_name = models.CharField(max_length=settings.SHORT_TEXT_LENGTH)
     last_name = models.CharField(max_length=settings.SHORT_TEXT_LENGTH)
     country = models.CharField(max_length=settings.MEDIUM_TEXT_LENGTH)
     city = models.CharField(max_length=settings.MEDIUM_TEXT_LENGTH)
     email = models.EmailField(max_length=settings.MAX_EMAIL_LENGTH)
     username = models.CharField(max_length=settings.SHORT_TEXT_LENGTH)
-    phone = models.CharField(validators=[phone_regex], max_length=settings.PHONE_NUM_LENGTH)
+    phone = models.CharField(validators=[constants.phone_regex], max_length=settings.PHONE_NUM_LENGTH)
     picture = models.ImageField()
     creator = models.ForeignKey(ApiUser, on_delete=models.CASCADE, related_name='generated_users')
 
