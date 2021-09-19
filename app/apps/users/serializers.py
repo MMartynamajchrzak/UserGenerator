@@ -20,5 +20,5 @@ class ApiUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, attrs):
-        password = make_password(attrs['password'])
-        return password
+        attrs['password'] = make_password(attrs['password'])
+        return attrs
