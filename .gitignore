@@ -4,3 +4,6 @@
 __pycache__
 postgres-data
 minio-data
+minio-data/.minio.sys/buckets/.bloomcycle.bin
+minio-data/.minio.sys/buckets/.minio.sys/buckets/.bloomcycle.bin/fs.json
+minio-data/.minio.sys/buckets/.tracker.bin
