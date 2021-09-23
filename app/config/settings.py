@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import environ
 
 env = environ.Env()
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'apps.users.apps.UsersConfig',
+    'apps.api_users.apps.UsersConfig',
 ]
 
 
@@ -87,7 +89,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = "users.ApiUser"
+AUTH_USER_MODEL = "api_users.ApiUser"
 
 
 # --------------------------password-validation--------------------------

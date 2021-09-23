@@ -1,18 +1,13 @@
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from . import constants
+from ..api_users.models import ApiUser
 
 
 class CreatedUpdatedMixin:
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-class ApiUser(AbstractUser, CreatedUpdatedMixin):
-
-    def __str__(self):
-        return self.username
 
 
 # Generated User
