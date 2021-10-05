@@ -1,11 +1,8 @@
-from django.urls import path
+from rest_framework import routers
 
-from .views import MustBeCreatorViewSet, FreePermissionViewSet
+from .views import UserViewSet
 
+router = routers.SimpleRouter()
+router.register(r'', UserViewSet, basename='users')
 
-urlpatterns = [
-    path('', MustBeCreatorViewSet.as_view({'post': 'create'})),
-    path('<int:pk>/', MustBeCreatorViewSet.as_view({'put': 'update', 'delete': 'destroy'})),
-    path('', FreePermissionViewSet.as_view({'get': 'list'})),
-    path('<int:pk>/', FreePermissionViewSet.as_view({'get': 'retrieve'})),
-]
+urlpatterns = router.urls
