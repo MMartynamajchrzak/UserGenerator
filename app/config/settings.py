@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import environ
 
 env = environ.Env()
@@ -10,6 +11,7 @@ SHORT_TEXT_LENGTH = 20
 MEDIUM_TEXT_LENGTH = 90
 MAX_EMAIL_LENGTH = 254
 SECRET_KEY = env.str("SECRET_KEY", default="")
+API_KEY = env.str("API_KEY", default="")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,8 +32,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'drf_spectacular',
     'apps.users.apps.UsersConfig',
+    'apps.api_users.apps.ApiUsersConfig',
 ]
 
 
@@ -85,7 +89,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = "users.ApiUser"
+AUTH_USER_MODEL = "api_users.ApiUser"
 
 
 # --------------------------password-validation--------------------------
@@ -148,6 +152,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
+
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
