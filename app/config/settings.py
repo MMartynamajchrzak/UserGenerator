@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'apps.users.apps.UsersConfig',
-    'apps.api_users.apps.UsersConfig',
+    'apps.api_users.apps.ApiUsersConfig',
 ]
 
 

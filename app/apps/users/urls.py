@@ -1,10 +1,11 @@
 from django.urls import path
 
-from .views import UserViewSet, GetUsers
+from .views import MustBeCreatorViewSet, FreePermissionViewSet
+
 
 urlpatterns = [
-    path("", UserViewSet.as_view({"post": "create"}), name='generate_user'),
-    path("<int:pk>/", UserViewSet.as_view({"put": "update"}), name='edit_user'),
-    path("", GetUsers.as_view({"get": "list"}), name="list_users"),
-    path("<int:pk>/", GetUsers.as_view({"get": "retrieve"}), name='get_user')
+    path('', MustBeCreatorViewSet.as_view({'post': 'create'})),
+    path('<int:pk>/', MustBeCreatorViewSet.as_view({'put': 'update', 'delete': 'destroy'})),
+    path('', FreePermissionViewSet.as_view({'get': 'list'})),
+    path('<int:pk>/', FreePermissionViewSet.as_view({'get': 'retrieve'})),
 ]

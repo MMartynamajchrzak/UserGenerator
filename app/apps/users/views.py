@@ -1,14 +1,17 @@
-from rest_framework import viewsets, mixins, permissions
+from rest_framework import viewsets, permissions, mixins
 
 from .models import User
 from .serializers import UserSerializer
 
 
-class UserViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.UpdateModelMixin):
+class MustBeCreatorViewSet(viewsets.GenericViewSet,
+                           mixins.CreateModelMixin,
+                           mixins.UpdateModelMixin,
+                           mixins.DestroyModelMixin):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    # owner for post and put
+    # owner for post and put `and del
     # consider option of creating multiple users at once
 
     def get_queryset(self):
@@ -16,7 +19,11 @@ class UserViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.Updat
         return User.objects.filter(creator=user)
 
 
-class GetUsers(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class FreePermissionViewSet(viewsets.GenericViewSet,
+                            mixins.ListModelMixin,
+                            mixins.RetrieveModelMixin):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all()
+
+    def get_queryset(self):
+        return User.objects.all()
