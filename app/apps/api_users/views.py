@@ -32,4 +32,3 @@ class ApiUserViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         headers = self.get_success_headers(token_serializer.data)
 
         return Response(token_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
