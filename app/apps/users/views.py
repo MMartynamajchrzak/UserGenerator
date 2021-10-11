@@ -30,25 +30,24 @@ class UserViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, quantity, **kwargs):
         r = requests.get(f"https://randomuser.me/api/?results={quantity}")
         generated_data = []
+        
         if r.status_code == 200:
             d = json.dumps(r.json())
             data = json.loads(d)
-            n = 0
+            
             for i in range(0, int(len(data))):
-
                 credentials = User(creator=self.request.user,
-                                   gender=data['results'][n]['gender'],
-                                   first_name=data['results'][n]['name']['first'],
-                                   last_name=data['results'][n]['name']['last'],
-                                   country=data['results'][n]['location']['country'],
-                                   city=data['results'][n]['location']['city'],
-                                   email=data['results'][n]['email'],
-                                   username=data['results'][n]['login']['username'],
-                                   phone=data['results'][n]['phone'],
-                                   picture=data['results'][n]['picture']['medium'],
+                                   gender=data['results'][0]['gender'],
+                                   first_name=data['results'][0]['name']['first'],
+                                   last_name=data['results'][0]['name']['last'],
+                                   country=data['results'][0]['location']['country'],
+                                   city=data['results'][0]['location']['city'],
+                                   email=data['results'][0]['email'],
+                                   username=data['results'][0]['login']['username'],
+                                   phone=data['results'][0]['phone'],
+                                   picture=data['results'][0]['picture']['medium'],
                                    )
 
-                n += 1
                 credentials.save()
                 serializer = UserSerializer(credentials)
                 generated_data.append(serializer.data)
