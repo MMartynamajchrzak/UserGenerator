@@ -1,6 +1,5 @@
-import json
-
 import requests
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.response import Response
 
@@ -27,30 +26,34 @@ class UserViewSet(viewsets.GenericViewSet,
             user = self.request.user
             return User.objects.filter(creator=user)
 
-    def create(self, request, *args, quantity, **kwargs):
-        r = requests.get(f"https://randomuser.me/api/?results={quantity}")
-        generated_data = []
-        
-        if r.status_code == 200:
-            d = json.dumps(r.json())
-            data = json.loads(d)
-            
-            for i in range(0, int(len(data))):
-                credentials = User(creator=self.request.user,
-                                   gender=data['results'][0]['gender'],
-                                   first_name=data['results'][0]['name']['first'],
-                                   last_name=data['results'][0]['name']['last'],
-                                   country=data['results'][0]['location']['country'],
-                                   city=data['results'][0]['location']['city'],
-                                   email=data['results'][0]['email'],
-                                   username=data['results'][0]['login']['username'],
-                                   phone=data['results'][0]['phone'],
-                                   picture=data['results'][0]['picture']['medium'],
-                                   )
+    @extend_schema(responses=UserSerializer)
+    def create(self, request, *args, quantity: int, **kwargs):
 
-                credentials.save()
-                serializer = UserSerializer(credentials)
-                generated_data.append(serializer.data)
+        def _parse_user(_user, _api):
+            return {
+                "gender": _user.get("gender") or _api["gender"],
+                "first_name": _user.get("first_name") or _api['name']['first'],
+                "last_name": _user.get("last_name") or _api['name']['last'],
+                "country": _user.get("country") or _api['location']['country'],
+                "city": _user.get("city") or _api['location']['city'],
+                "email": _user.get("email") or _api["email"],
+                "username": _user.get("username") or _api['login']['username'],
+                "phone": _user.get("phone") or _api['cell'],
+            }
 
-            return Response(data=generated_data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        response = requests.get(f"https://randomuser.me/api/?results={quantity}")
+        response.raise_for_status()
+
+        user_data = [
+            _parse_user(_user=user, _api=response.json()['results'][i])
+            for i, user in enumerate(request.data.get("users", []))
+        ]
+
+        users = UserSerializer(data=user_data, many=True)
+        users.is_valid(raise_exception=True)
+        users.save()
+
+        return Response(data=users.data, status=status.HTTP_201_CREATED)
+
+
+

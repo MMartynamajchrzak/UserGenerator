@@ -20,7 +20,7 @@ class User(models.Model, CreatedUpdatedMixin):
     email = models.EmailField(max_length=settings.MAX_EMAIL_LENGTH)
     username = models.CharField(max_length=settings.SHORT_TEXT_LENGTH)
     phone = models.CharField(validators=[constants.phone_regex], max_length=settings.PHONE_NUM_LENGTH)
-    picture = models.ImageField()
+    picture = models.ImageField(blank=True, null=True)
     creator = models.ForeignKey(ApiUser, on_delete=models.CASCADE, related_name='generated_users')
 
     def __str__(self):
