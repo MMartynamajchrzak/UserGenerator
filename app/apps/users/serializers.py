@@ -18,4 +18,3 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'creator',
         ]
-        read_only_fields = ['creator']

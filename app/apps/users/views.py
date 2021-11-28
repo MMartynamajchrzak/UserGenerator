@@ -39,21 +39,16 @@ class UserViewSet(viewsets.GenericViewSet,
                 "email": _user.get("email") or _api["email"],
                 "username": _user.get("username") or _api['login']['username'],
                 "phone": _user.get("phone") or _api['cell'],
+                "creator": self.request.user.id,
             }
 
         response = requests.get(f"https://randomuser.me/api/?results={quantity}")
         response.raise_for_status()
 
-        user_data = [
-            _parse_user(_user=user, _api=response.json()['results'][i])
-            for i, user in enumerate(request.data.get("users", []))
-        ]
+        user_data = [_parse_user(self.request.data, response.json()['results'][i]) for i in range(quantity)]
 
         users = UserSerializer(data=user_data, many=True)
         users.is_valid(raise_exception=True)
         users.save()
 
         return Response(data=users.data, status=status.HTTP_201_CREATED)
-
-
-
