@@ -7,19 +7,3 @@ gender = [
     ('female', 'Female'),
     ('male', 'Male'),
 ]
-
-fields = ['gender', 'first_name', 'last_name', 'country', 'city',
-          'email', 'username', 'phone']
-longer_path = {'first_name': 'first',
-               'last_name': 'last',
-               'country': 'country',
-               'city': 'city',
-               'username': 'username'}
-
-second_parameter = {'first_name': 'name',
-                    'last_name': 'name',
-                    'country': 'location',
-                    'city': 'location',
-                    'username': 'login'}
-
-shorter_path = ['gender', 'email', 'phone']
