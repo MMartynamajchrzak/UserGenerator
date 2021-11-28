@@ -4,12 +4,17 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
-        fields = ['gender', 'first_name', 'last_name', 'country', 'city',
-                  'email', 'username', 'phone', 'picture', 'creator']
-        read_only_fields = ['creator']
-
-    """def create(self, validated_data):
-        # use API
-        """
+        fields = [
+            'gender',
+            'first_name',
+            'last_name',
+            'country',
+            'city',
+            'email',
+            'username',
+            'phone',
+            'creator',
+        ]

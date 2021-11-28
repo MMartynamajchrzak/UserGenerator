@@ -7,12 +7,12 @@ from .models import ApiUser
 from .serializers import ApiUserSerializer, TokenSerializer
 
 
-@extend_schema(request=ApiUserSerializer, responses=TokenSerializer)
 class ApiUserViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     serializer_class = ApiUserSerializer
     permission_classes = [permissions.AllowAny]
     queryset = ApiUser.objects.all()
 
+    @extend_schema(request=ApiUserSerializer, responses=TokenSerializer)
     def create(self, request, *args, **kwargs):
         api_user_serializer = self.get_serializer(data=request.data)
         api_user_serializer.is_valid(raise_exception=True)
@@ -32,4 +32,3 @@ class ApiUserViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         headers = self.get_success_headers(token_serializer.data)
 
         return Response(token_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-

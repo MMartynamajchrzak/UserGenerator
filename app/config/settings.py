@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -10,6 +11,7 @@ PHONE_NUM_LENGTH = 16
 SHORT_TEXT_LENGTH = 20
 MEDIUM_TEXT_LENGTH = 90
 MAX_EMAIL_LENGTH = 254
+SESSIONS_LENGTH = 15
 SECRET_KEY = env.str("SECRET_KEY", default="")
 API_KEY = env.str("API_KEY", default="")
 
@@ -157,6 +159,13 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+# ----------------------------SIMPLE_JWT----------------------------
+SIMPLE_JWT = {
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=SESSIONS_LENGTH),
+    "ROTATE_REFRESH_TOKENS": True,
 }
 
 
