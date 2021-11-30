@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='phone',
-            field=models.CharField(max_length=16, validators=[django.core.validators.RegexValidator(message='First input country code eg.(+48), then the number.', regex='^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$')]),
+            field=models.CharField(max_length=16, validators=[django.core.validators.RegexValidator(
+                message='First input country code eg.(+48), then the number.',
+                regex='^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$')]),
         ),
     ]

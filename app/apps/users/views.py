@@ -45,34 +45,21 @@ class UserViewSet(viewsets.GenericViewSet,
         response = requests.get(f"https://randomuser.me/api/?results={quantity}")
         response.raise_for_status()
 
+        results = response.json()['results']
+
         # case we have data for more than one person as input
         if type(self.request.data) == list:
-            if len(self.request.data) >= quantity:
-                user_data = [_parse_user(self.request.data[i], response.json()['results'][i])
-                             for i in range(quantity)]
-            else:
-                # consider using only api data when quantity > len(request.data)
-                user_data = []
-                for i in range(quantity):
-                    if i >= len(self.request.data):
-                        result = {
-                            "gender": response.json()['results'][i]["gender"],
-                            "first_name": response.json()['results'][i]['name']['first'],
-                            "last_name": response.json()['results'][i]['name']['last'],
-                            "country": response.json()['results'][i]['location']['country'],
-                            "city": response.json()['results'][i]['location']['city'],
-                            "email": response.json()['results'][i]["email"],
-                            "username": response.json()['results'][i]['login']['username'],
-                            "phone": response.json()['results'][i]['cell'],
-                            "creator": self.request.user.id,
-                        }
-                        user_data.append(result)
-                    else:
-                        user_data.append(_parse_user(self.request.data[i], response.json()['results'][i]))
+            user_data = [
+                (
+                    _parse_user(self.request.data[i], results[i])
+                    if i < len(self.request.data)
+                    else _parse_user({}, results[i])
+                ) for i in range(quantity)
+            ]
+
         # case it's dict and we iterate just once
         else:
-            user_data = [_parse_user(self.request.data, response.json()['results'][i])
-                         for i in range(quantity)]
+            user_data = [_parse_user(self.request.data, results[0])]
 
         users = UserSerializer(data=user_data, many=True)
         users.is_valid(raise_exception=True)
