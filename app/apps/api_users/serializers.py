@@ -2,15 +2,13 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from .models import ApiUser
-from apps.users.serializers import UserSerializer
 
 
 class ApiUserSerializer(serializers.ModelSerializer):
-    generated_users = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = ApiUser
-        fields = ['username', 'password', 'is_staff', 'is_superuser', 'generated_users']
+        fields = ['username', 'password', 'is_staff', 'is_superuser']
         extra_kwargs = {'password': {'write_only': True}}
         read_only_fields = ['is_staff', 'is_superuser']
 

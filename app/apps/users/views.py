@@ -1,4 +1,7 @@
+from io import BytesIO
+
 import requests
+from django.core.files import File
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.response import Response
@@ -8,7 +11,12 @@ from .serializers import UserSerializer
 
 
 class UserViewSet(viewsets.GenericViewSet,
-                  mixins.CreateModelMixin):
+                  mixins.CreateModelMixin,
+                  mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin):
+
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -29,7 +37,7 @@ class UserViewSet(viewsets.GenericViewSet,
                 "email": _user.get("email") or _api["email"],
                 "username": _user.get("username") or _api['login']['username'],
                 "phone": _user.get("phone") or _api['cell'],
-                "creator": self.request.user.id,
+                "creator": self.request.user
             }
 
         response = requests.get(f"https://randomuser.me/api/?results={quantity}")
@@ -42,6 +50,7 @@ class UserViewSet(viewsets.GenericViewSet,
             if len(self.request.data) >= quantity:
                 user_data = [_parse_user(self.request.data[i], results[i])
                              for i in range(quantity)]
+
             else:
                 # consider using only api data when quantity > len(request.data)
                 user_data = []
@@ -55,8 +64,22 @@ class UserViewSet(viewsets.GenericViewSet,
         else:
             user_data = [_parse_user(self.request.data, results[0])]
 
-        users = UserSerializer(data=user_data, many=True)
+
+        users = UserSerializer(data=user_data, many=True, context={'request': request})
         users.is_valid(raise_exception=True)
         users.save()
+
+        if quantity == 0:
+            quantity = 1
+
+        for i in range(quantity):
+
+            response = requests.get(results[i]['picture']['large'])
+            response.raise_for_status()
+            picture = BytesIO(response.content)
+
+            user = User.objects.get(email=user_data[i]['email'])
+            user.picture.save(f"Profile-{user.pk}.jpg", File(picture))
+
 
         return Response(data=users.data, status=status.HTTP_201_CREATED)

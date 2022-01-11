@@ -12,6 +12,7 @@ SHORT_TEXT_LENGTH = 20
 MEDIUM_TEXT_LENGTH = 90
 MAX_EMAIL_LENGTH = 254
 SESSIONS_LENGTH = 15
+REFRESH_SESSION_LENGTH = 30
 SECRET_KEY = env.str("SECRET_KEY", default="")
 API_KEY = env.str("API_KEY", default="")
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'apps.users.apps.UsersConfig',
     'apps.api_users.apps.ApiUsersConfig',
+    'storages',
 ]
 
 
@@ -131,10 +133,14 @@ USE_TZ = True
 # --------------------------django-storages--------------------------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-AWS_ACCESS_KEY_ID = env.str("MINIO_ACCESS_KEY", default='')
-AWS_SECRET_ACCESS_KEY = env.str("MINIO_SECRET_KEY", default='')
-AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME", default='static')
-AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", default='http://localhost:9000')
+AWS_ACCESS_KEY_ID = env.str("MINIO_ACCESS_KEY", default='access-key')
+AWS_SECRET_ACCESS_KEY = env.str("MINIO_SECRET_KEY", default='secret-key')
+AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME", default='local-bucket')
+
+MINIO_STORAGE_USE_HTTPS = False
+
+if DEBUG:
+    AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", default='http://minio:9000')
 
 
 # --------------------------static-files--------------------------
@@ -164,7 +170,8 @@ REST_FRAMEWORK = {
 
 # ----------------------------SIMPLE_JWT----------------------------
 SIMPLE_JWT = {
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=SESSIONS_LENGTH),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=REFRESH_SESSION_LENGTH),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=SESSIONS_LENGTH),
     "ROTATE_REFRESH_TOKENS": True,
 }
 
