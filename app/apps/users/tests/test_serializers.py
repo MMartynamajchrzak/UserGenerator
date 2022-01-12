@@ -20,8 +20,7 @@ class TestUserSerializer(TestCase):
             city="Opole",
             email="mario.perkins@example.com",
             username="organicgoose823",
-            phone="0716-846-384",
-            creator=api_user
+            phone="0716-846-384"
         )
 
     def test_user_fields_content(self):

@@ -5,6 +5,8 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
 
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = User
         fields = [

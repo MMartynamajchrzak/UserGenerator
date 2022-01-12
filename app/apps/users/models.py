@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 
 from . import constants
-from ..api_users.models import ApiUser
 
 
 class CreatedUpdatedMixin:
@@ -21,7 +20,8 @@ class User(models.Model, CreatedUpdatedMixin):
     username = models.CharField(max_length=settings.SHORT_TEXT_LENGTH)
     phone = models.CharField(validators=[constants.phone_regex], max_length=settings.PHONE_NUM_LENGTH)
     picture = models.ImageField(blank=True, null=True)
-    creator = models.ForeignKey(ApiUser, on_delete=models.CASCADE, related_name='generated_users')
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                null=True, blank=True, related_name="creator")
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'

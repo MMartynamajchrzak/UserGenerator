@@ -7,7 +7,9 @@ from .models import ApiUser
 from .serializers import ApiUserSerializer, TokenSerializer
 
 
-class ApiUserViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+class ApiUserViewSet(viewsets.GenericViewSet,
+                     mixins.CreateModelMixin):
+
     serializer_class = ApiUserSerializer
     permission_classes = [permissions.AllowAny]
     queryset = ApiUser.objects.all()
