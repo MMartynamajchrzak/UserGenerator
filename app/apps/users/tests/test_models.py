@@ -12,7 +12,6 @@ def sample_api_user():
 
 
 def sample_user():
-
     return User.objects.create(
         gender="male",
         first_name="Mateusz",

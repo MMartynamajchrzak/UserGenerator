@@ -1,17 +1,12 @@
 from django.test import TestCase
-from apps.users.serializers import UserSerializer
-from apps.api_users.models import ApiUser
+
 from apps.users.models import User
+from apps.users.serializers import UserSerializer
 
 
 class TestUserSerializer(TestCase):
 
     def setUp(self):
-        api_user = ApiUser.objects.create(
-            username='test_user',
-            password='test_pass'
-        )
-
         self.user = User.objects.create(
             gender="male",
             first_name="Mateusz",

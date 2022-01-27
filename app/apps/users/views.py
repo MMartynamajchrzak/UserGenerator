@@ -1,21 +1,17 @@
 from io import BytesIO
+from typing import List
 
 import requests
 from django.core.files import File
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, permissions, status, mixins
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
 from .models import User
 from .serializers import UserSerializer
 
 
-class UserViewSet(viewsets.GenericViewSet,
-                  mixins.CreateModelMixin,
-                  mixins.ListModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin):
+class UserViewSet(viewsets.ModelViewSet):
 
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -23,6 +19,25 @@ class UserViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         user = self.request.user
         return User.objects.filter(creator=user)
+
+    @staticmethod
+    def get_users_from_api(quantity: int) -> list:
+        response = requests.get(f"https://randomuser.me/api/?results={quantity}")
+        response.raise_for_status()
+
+        return response.json()['results']
+
+    @staticmethod
+    def get_pictures(results) -> List[BytesIO]:
+        pictures = []
+
+        for i in range(len(results)):
+            response = requests.get(results[i]['picture']['large'])
+            response.raise_for_status()
+            picture = BytesIO(response.content)
+            pictures.append(picture)
+
+        return pictures
 
     @extend_schema(responses=UserSerializer)
     def create(self, request, *args, quantity: int, **kwargs):
@@ -40,15 +55,12 @@ class UserViewSet(viewsets.GenericViewSet,
                 "creator": self.request.user
             }
 
-        response = requests.get(f"https://randomuser.me/api/?results={quantity}")
-        response.raise_for_status()
-
-        results = response.json()['results']
+        user_api_results = self.get_users_from_api(quantity)
 
         # case we have data for more than one person as input
         if type(self.request.data) == list:
             if len(self.request.data) >= quantity:
-                user_data = [_parse_user(self.request.data[i], results[i])
+                user_data = [_parse_user(self.request.data[i], user_api_results[i])
                              for i in range(quantity)]
 
             else:
@@ -56,13 +68,13 @@ class UserViewSet(viewsets.GenericViewSet,
                 user_data = []
                 for i in range(quantity):
                     if i >= len(self.request.data):
-                        user_data.append(_parse_user({}, results[i]))
+                        user_data.append(_parse_user({}, user_api_results[i]))
                     else:
-                        user_data.append(_parse_user(self.request.data[i], results[i]))
+                        user_data.append(_parse_user(self.request.data[i], user_api_results[i]))
 
             # case it's dict and we iterate just once
         else:
-            user_data = [_parse_user(self.request.data, results[0])]
+            user_data = [_parse_user(self.request.data, user_api_results[0])]
 
 
         users = UserSerializer(data=user_data, many=True, context={'request': request})
@@ -72,14 +84,11 @@ class UserViewSet(viewsets.GenericViewSet,
         if quantity == 0:
             quantity = 1
 
+        # convert image url to image
+        pictures = self.get_pictures(user_api_results)
+
         for i in range(quantity):
-
-            response = requests.get(results[i]['picture']['large'])
-            response.raise_for_status()
-            picture = BytesIO(response.content)
-
             user = User.objects.get(email=user_data[i]['email'])
-            user.picture.save(f"Profile-{user.pk}.jpg", File(picture))
-
+            user.picture.save(f"Profile-{user.pk}.jpg", File(pictures[i]))
 
         return Response(data=users.data, status=status.HTTP_201_CREATED)
