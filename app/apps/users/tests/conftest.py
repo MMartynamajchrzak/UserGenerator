@@ -1,9 +1,9 @@
 from io import BytesIO
 
-# user example
-# I use it as users request.data
 from apps.users.constants import PHOTO_BYTE
 
+# user example
+# I use it as users request.data
 USER = [{
     "gender": "male",
     "first_name": "Mateusz",

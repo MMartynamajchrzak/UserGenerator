@@ -5,10 +5,9 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from .conftest import USER, mock_api_data, _get_photo_bytes
-
-# urls
 from ..models import User
 
+# urls
 CREATE_NO_PARAM = "/users/"
 GET_ALL_USERS = "/users/all/"
 
