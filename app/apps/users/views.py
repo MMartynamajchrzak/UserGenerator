@@ -21,7 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return User.objects.filter(creator=user)
 
     @staticmethod
-    def get_users_from_api(quantity: int) -> dict:
+    def get_users_from_api(quantity: int) -> list:
         response = requests.get(f"https://randomuser.me/api/?results={quantity}")
         response.raise_for_status()
 

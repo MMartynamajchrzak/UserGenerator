@@ -1,5 +1,4 @@
 from io import BytesIO
-from unittest import mock
 
 # user example
 # I use it as users request.data
@@ -20,9 +19,9 @@ USER = [{
 # faking data from random user api
 # used in first requests.get
 def mock_api_data(n):
-    l = {'results': []}
+    results = []
     for i in range(n):
-        l['results'].append({
+        results.append({
             "gender": f"female",
             "name": {
                 "first": f"Test{i}",
@@ -41,20 +40,9 @@ def mock_api_data(n):
                 'large': 'https://randomuser.me/api/portraits/women/37.jpg'
             }
         })
-    return l
+    return results
 
 
 # list of bytesIO objects to fake
 def _get_photo_bytes(n_photos):
     return [BytesIO(PHOTO_BYTE) for _ in range(n_photos)]
-
-
-# mock n objects
-# currently not used --> gonna delete later
-def mock_users(n, fake_get):
-    mocked_result = [mock.Mock() for _ in range(n+1)]
-    mocked_result[0].json.return_value = mock_api_data(n)
-    for i in range(1, n+1):
-        mocked_result[i].return_value = [BytesIO(PHOTO_BYTE)]
-
-    fake_get.side_effect = mocked_result
