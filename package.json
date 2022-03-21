@@ -1,0 +1,9 @@
+{
+  "name": "user-generator-serverless",
+  "version": "",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-python-requirements": "^5.4.0",
+    "serverless-wsgi": "^3.0.0"
+  }
+}

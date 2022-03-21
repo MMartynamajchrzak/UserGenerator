@@ -1,0 +1,36 @@
+service: user-generator-serverless
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+
+provider:
+  name: aws
+  runtime: python3.9.6
+  environment:
+    POSTGRES_DB: ${param:POSTGRES_DB}
+    POSTGRES_HOST: ${param:POSTGRES_HOST}
+    POSTGRES_PORT: ${param:POSTGRES_PORT}
+    POSTGRES_USER: ${param:POSTGRES_USER}
+    POSTGRES_PASSWORD: ${param:POSTGRES_PASSWORD}
+    SECRET_KEY: ${param:SECRET_KEY}
+    DJANGO_SETTINGS_MODULE: config.settings
+
+functions:
+  app:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+    timeout: 30
+  migrate:
+    handler: serverless_migrate.handler
+    timeout: 300
+
+custom:
+  wsgi:
+    app: config.wsgi.application
+    packRequirements: false
+    pythonRequirements:
+      dockerizePip: non-linux
+      dockerFile: ./Dockerfile
